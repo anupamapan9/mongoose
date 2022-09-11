@@ -31,7 +31,7 @@ const productSchema = mongoose.Schema({
         type: String,
         require: true,
         enum: {
-            value: ['kg', 'liter', 'pcs'],
+            values: ['kg', 'liter', 'pcs'],
             message: 'Unite value must be kg/liter/pcs'
         }
     },
@@ -52,39 +52,54 @@ const productSchema = mongoose.Schema({
     status: {
         type: String,
         enum: {
-            value: ['in-stock', 'out-of-stock', 'discontinued'],
+            values: ['in-stock', 'out-of-stock', 'discontinued'],
             message: 'False value'
         }
     },
-    catagories: [{
-        name: {
-            type: String,
-            require: true
-        },
-        _id: mongoose.Schema.Types.ObjectId,
-    }],
-    supplier: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Supplier"
-    }
-    // createdAt: {
-    //     type: Date,
-    //     default: Date.now,
-    // },
-    // updatedAt: {
-    //     type: Date,
-    //     default: Date.now,
-    // },
-
-
+    // catagories: [{
+    //     name: {
+    //         type: String,
+    //         require: true
+    //     },
+    //     _id: mongoose.Schema.Types.ObjectId,
+    // }],
+    // supplier: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Supplier"
+    // }
 }, {
     timestamps: true
 })
+//SCHEMA -> MODEL -> Query
 
+
+//model-------------------------
+
+const Product = mongoose.model('Product', productSchema)
 
 // routes----------------- 
 app.get('/', (req, res) => {
     res.send('Hello World!')
+})
+app.post('/ap1/v1/product', async (req, res, next) => {
+
+    try {
+        // save ------------
+        const product = new Product(req.body)
+        const data = await product.save()
+        res.status(200).json({
+            message: 'Successfully added',
+            status: 'success',
+            data
+        })
+    } catch (error) {
+        res.status(400).json({
+            message: 'fail',
+            error
+        })
+    }
+
+
 })
 
 
